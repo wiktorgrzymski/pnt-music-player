@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PNTmixtape</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23000' width='100' height='100'/><text x='50' y='70' font-size='60' font-weight='bold' fill='%23fff' text-anchor='middle' font-family='Arial'>PNT</text></svg>" />
+    <style>
+      body, html {
+        margin: 0;
+        padding: 0;
+        background: #2a2a2a;
+        font-family: Arial, sans-serif;
+      }
+      
+      .ticker {
+        overflow: hidden;
+        background: #1a1a1a;
+        border-top: 1px solid #444;
+        border-bottom: 1px solid #444;
+        padding: 5px 0;
+        font-size: 12px;
+        font-weight: bold;
+        color: #fff;
+        white-space: nowrap;
+      }
+      
+      .ticker-top {
+        border-bottom: 1px solid #444;
+        border-top: none;
+      }
+      
+      .ticker-bottom {
+        border-top: 1px solid #444;
+        border-bottom: none;
+      }
+      
+      .ticker-content {
+        display: inline-block;
+        animation: scroll-left 20s linear infinite;
+        white-space: nowrap;
+      }
+      
+      .ticker-bottom .ticker-content {
+        animation: scroll-right 20s linear infinite;
+      }
+      
+      @keyframes scroll-left {
+        from {
+          transform: translateX(100%);
+        }
+        to {
+          transform: translateX(-100%);
+        }
+      }
+      
+      @keyframes scroll-right {
+        from {
+          transform: translateX(-100%);
+        }
+        to {
+          transform: translateX(100%);
+        }
+      }
+      
+      #app {
+        height: calc(100vh - 40px);
+        display: flex;
+        flex-direction: column;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ticker ticker-top">
+      <div class="ticker-content">
+        PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT 
+      </div>
+    </div>
+    
+    <div id="app" style="height: calc(100vh - 40px)">
+      <!-- Webamp will attempt to center itself within this div -->
+    </div>
+    
+    <div class="ticker ticker-bottom">
+      <div class="ticker-content">
+        PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT · PNT
+      </div>
+    </div>
+
+    <div style="text-align: center; padding: 20px;">
+      <button id="downloadBtn" style="color: #00ff00; font-size: 24px; font-weight: bold; font-family: Courier; background: none; border: 2px solid #00ff00; padding: 10px 40px; cursor: pointer; border-radius: 4px;">
+        SPRAWDŹ
+      </button>
+      
+      <div id="downloadList" style="display: none; margin-top: 20px; max-width: 600px; margin-left: auto; margin-right: auto;"></div>
+    </div>
+
+    <script>
+      // Lista piosenek z folderu /music
+      const MUSIC_FILES = [
+        '1. 600PNT - na jednym loopie, w jedynym miescie.mp3',
+        '2. 600PNT - EBERECHI EZE.mp3',
+        '3. 600PNT - WDYMIE.mp3',
+        '4. 600PNT - 2FEJS pt.1.mp3',
+        '5. 600PNT - siepomylilem.mp3',
+        '6. 600PNT - POLSKI NOWY TOWAR.mp3',
+        '7. 600PNT - korner.mp3',
+        '8. 600PNT - miedzy hajhetem i stopom.mp3',
+        '9. 600PNT - ten sukces.mp3',
+        'PNT MIXTEJP VOL.1 FULL MIXTEJP.mp3'
+      ];
+
+      const getTrackMetadata = (file) => {
+        const name = file.replace(/\.mp3$/i, '').replace(/^\d+\.\s*/, '');
+        const separatorIndex = name.indexOf(' - ');
+
+        if (separatorIndex === -1) {
+          return { artist: '600PNT', title: name };
+        }
+
+        return {
+          artist: name.slice(0, separatorIndex),
+          title: name.slice(separatorIndex + 3),
+        };
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const downloadBtn = document.getElementById('downloadBtn');
+        const downloadList = document.getElementById('downloadList');
+        
+        // Dynamicznie generuj linki pobierania
+        MUSIC_FILES.forEach(file => {
+          const link = document.createElement('a');
+          link.href = `/music/${encodeURIComponent(file)}`;
+          link.download = file;
+          link.style.display = 'block';
+          link.style.margin = '10px 0';
+          link.style.color = '#00ff00';
+          link.style.textDecoration = 'none';
+          link.style.padding = '10px';
+          link.style.background = '#222';
+          link.style.borderRadius = '4px';
+          link.textContent = file;
+          downloadList.appendChild(link);
+        });
+        
+        if (downloadBtn) {
+          downloadBtn.addEventListener('click', () => {
+            if (downloadList) {
+              downloadList.style.display = downloadList.style.display === 'none' ? 'block' : 'none';
+            }
+          });
+        }
+
+        // Załaduj też do Webampa
+        window.MUSIC_FILES = MUSIC_FILES;
+      });
+    </script>
+    <script type="module">
+      import Webamp from "https://unpkg.com/webamp@^2/butterchurn";
+      
+      // Czekaj aż piosenki się załadują
+      async function initWebamp() {
+        let attempts = 0;
+        while (!window.MUSIC_FILES && attempts < 50) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          attempts++;
+        }
+        
+        const musicFiles = window.MUSIC_FILES || [
+          '1. 600PNT - na jednym loopie, w jedynym miescie.mp3',
+          '2. 600PNT - EBERECHI EZE.mp3',
+          '3. 600PNT - WDYMIE.mp3'
+        ];
+        
+        // Dynamicznie generuj tracki dla Webampa
+        const initialTracks = musicFiles.map(file => ({
+          metaData: {
+            ...getTrackMetadata(file),
+          },
+          url: `/music/${encodeURIComponent(file)}`,
+        }));
+        
+        const webamp = new Webamp({
+          initialTracks: initialTracks,
+        });
+        webamp.renderWhenReady(document.getElementById("app"));
+      }
+      
+      initWebamp();
+    </script>
+  </body>
+</html>
